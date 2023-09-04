@@ -1,12 +1,13 @@
 package com.questions.questions;
 
-import errors.validationError;
+import errors.ValidError;
 import jakarta.validation.Valid;
 import messages.Message;
-import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -29,19 +30,20 @@ public class QuestionController {
     @CrossOrigin
     @PostMapping("/save")
     public ResponseEntity<?> getSave( @Valid @RequestBody QuestionsModels questionsModel){
-        String correct = questionsModel.getCorrect();
-        String title = questionsModel.getTitle();
-        if((correct == null || correct.isEmpty())  || (title==null || title.isEmpty())   ){
-            validationError validationErrors = new validationError(400, "validation is bad","/api/save");
-            Map<String, String> validationErrorsMessage = new HashMap<>();
-            validationErrorsMessage.put("correct","this area is not be empty");
-            validationErrors.setValidationErrors(validationErrorsMessage);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationErrors);
-        }
         questionService.save(questionsModel);
+ return ResponseEntity.status(HttpStatus.CREATED).body(new Message(200,"this question was created"));
+    }
 
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(new Message(200,"this question was created"));
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ValidError handleValidationException(MethodArgumentNotValidException exception){
+        ValidError validError =  new ValidError(400,"validation error", "/api/save");
+        Map<String,String> errors =new HashMap<>();
+        for(FieldError fieldError : exception.getBindingResult().getFieldErrors()){
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+        validError.setValidationErrors(errors);
+        return  validError;
     }
 
 
