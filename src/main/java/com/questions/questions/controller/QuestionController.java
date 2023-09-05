@@ -1,5 +1,7 @@
-package com.questions.questions;
+package com.questions.questions.controller;
 
+import com.questions.questions.service.QuestionService;
+import com.questions.questions.models.QuestionsModels;
 import errors.ValidError;
 import jakarta.validation.Valid;
 import messages.Message;
@@ -20,7 +22,7 @@ import java.util.Optional;
 @Validated
 public class QuestionController {
 
-    private  QuestionService questionService;
+    private QuestionService questionService;
 
     public QuestionController(QuestionService questionService) {
         this.questionService = questionService;

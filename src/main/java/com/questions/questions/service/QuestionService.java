@@ -1,5 +1,7 @@
-package com.questions.questions;
+package com.questions.questions.service;
 
+import com.questions.questions.models.QuestionsModels;
+import com.questions.questions.repository.SorguMongo;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
